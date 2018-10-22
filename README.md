@@ -8,6 +8,9 @@
 - calendar view
 - filter view
 - - only show debts, living, income, etc
+- Food sub tracker
+- - Spread sheet
+- - Track remaining food budget
 
 ## Project setup
 ```

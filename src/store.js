@@ -5,12 +5,23 @@ Vue.use(Vuex)
 
 export default new Vuex.Store({
   state: {
-
+    bill: {},
+    bills: []
+  },
+  getters: {
+    // TODO: 
+    // *thought* make dynamic filter function
+    // return categories
+    // return bill names
+    // return bill prices
+    // return owed debt objects
   },
   mutations: {
-
-  },
-  actions: {
-
+    updateBills (state, payload) {
+      state.bills = payload
+    },
+    addBill (state, payload) {
+      state.bills.push(payload)
+    }
   }
 })

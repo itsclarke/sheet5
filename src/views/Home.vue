@@ -1,9 +1,15 @@
 <template>
     <div>
-      <form>
-        <input type="text" name="" id="" placeholder="add new bill" style="border: solid 1px black">
-        <button type="submit" style="border: solid 1px black">Add bill</button>
-      </form>
+      <v-form ref="form">
+        <label for="">Add a new bill</label>
+        <v-text-field v-model="bill.name" placeholder="add new bill"></v-text-field>
+        <v-text-field v-model="bill.price" placeholder="price"></v-text-field>
+        <v-text-field v-model="bill.dueDate" type="date" placeholder="due date"></v-text-field>
+        <v-select name="" id="" :items="this.bills"></v-select>
+        <label for="">Owed</label>
+        <v-checkbox type="checkbox" name="" id=""></v-checkbox>
+        <v-btn @click="submit">Add bill</v-btn>
+      </v-form>
         <v-data-table :items="bills" :headers="headers" :rows-per-page-items="[50]">
         <template slot="items" slot-scope="props">
             <td>{{props.item.name}}</td>
@@ -17,15 +23,19 @@
 <script>
 import moment from 'moment'
 import numeral from 'numeral'
+import { mapState } from 'vuex'
 import { _BILLS } from '@/data'
-import { calculateTotal, getPrices, getPricesArray, getNamesArray } from '@/utils'
+import { calculateTotal, getPrices } from '@/utils'
 
 export default {
     name: 'Home',
+    computed: mapState({
+        bill: state => state.bill,
+        bills: state => state.bills,
+        total: state => state.total
+    }),
     data() {
         return {
-            bills: [],
-            total: 0,
             prices: [],
             monthlyIncome: 0,
             remainingCash: 0,
@@ -42,21 +52,23 @@ export default {
         }
     },
     mounted() {
-        this.bills = _BILLS;
-        this.total = calculateTotal(_BILLS)
+        this.$store.commit('updateBills', _BILLS)
+        this.$store.total = calculateTotal(_BILLS)
         this.prices = getPrices(_BILLS)
         this.monthlyIncome = this.getIncome()
         this.remainingCash = this.getRemainder()
     },
     methods: {
+        submit: function() {
+            if (this.$refs.form.validate()) {
+                this.$store.commit('addBill', this.bill)
+            }
+        },
         getIncome: function() {
             return 2310.69 * 2
         },
         getRemainder: function() {
             return this.monthlyIncome - this.prices
-        },
-        classColor: function(bill) {
-            return bill.type.owed === true 
         }
     },
     filters: {
@@ -74,3 +86,9 @@ export default {
     },
 }
 </script>
+
+<style lang="scss" scoped>
+    input {
+        display: block;
+    }
+</style>
